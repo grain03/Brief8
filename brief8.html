@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <form onsubmit="return false">
+            <label for="name">Nom</label>
+            <input type="text" id="name">
+
+            <label for="name">Marque</label>
+            <input type="text" id="mark">
+
+            <label for="name">Prix</label>
+            <input type="number" step="0.01" id="price" placeholder="$">
+
+            <label for="name">Date de production</label>
+            <input type="date" id="date">
+
+            <label for="type">Type</label>
+            <select id="type">
+                <option value="1">Choisissez un type</option>
+                <option value="hygiène et toilette">hygiène et toilette</option>
+                <option value="soins esthétiques">soins esthétiques</option>
+                <option value="produits solaires">produits solaires</option>
+                <option value="beauté des mains et des pieds">beauté des mains et des pieds</option>
+                <option value="produits de maquillage">produits de maquillage</option>
+                <option value="entretien capillaires">entretien capillaires</option>
+                <option value="parfums">parfums</option>
+
+            </select>
+
+            <label for="name">Promotion</label>
+            <div id="promo">
+            <input type="radio" name="promo" id="promod" checked>
+            <label for="promoy">YES</label>
+            <input type="radio" name="promo" id="promoy">
+            <label for="promon">NO</label>
+            <input type="radio" name="promo" id="promon">
+            </div>
+
+            <div id="buttons"> 
+            <button id="btn" onclick="check()">Ajouter</button>
+            </div>
+
+
+
+        </form>
+
+<center id="parentmodal">
+
+</center>
+
+        <table id="tables">
+            <tr>
+              <th>Nom</th>
+              <th>Marque</th>
+              <th>Prix</th>
+              <th>Date de Production</th>
+              <th>Type</th>
+              <th>Promotion</th>
+
+            </tr>
+          </table>
+    </section>
+
+
+
+
+
+
+
+    <script>
+
+
+
+        // "Ajouter" Button has a function called check().
+            function check(){
+            let name = document.getElementById('name');
+            let mark = document.getElementById('mark');
+            let price = document.getElementById('price');
+            let date = document.getElementById('date');
+            let type = document.getElementById('type');
+            let promodefault = document.getElementById('promod');
+            let promoyes = document.getElementById('promoy');
+            let promono = document.getElementById('promon');
+            let promochecked;
+        
+        // New Buttons created after clicking on "Ajouter" Button,
+        // Button Name of Delete called "Supprimer" and Button Name of Modification called "Modifier"
+            let newtdbtnmod = document.createElement('button');
+        
+            let newtdbtnsup = document.createElement('button');
+        
+            let ModButtonText = document.createTextNode('Modifier')
+            let SupButtonText = document.createTextNode('Supprimer')
+        
+            newtdbtnmod.appendChild(ModButtonText)
+            newtdbtnsup.appendChild(SupButtonText)
+        
+        // Adding Attributes And Functions to our buttons
+            newtdbtnsup.setAttribute("id", "supprimer")
+            newtdbtnsup.addEventListener("click", supprimer);
+        
+        
+            newtdbtnmod.setAttribute("id", "modifier")
+            newtdbtnmod.addEventListener("click", modifier);
+        
+        // After clicking on "Ajouter" Button our function create new tr and new tds 
+            let table = document.getElementById('tables');
+            let newtr = document.createElement('tr');
+            let newtd1 = document.createElement('td');
+            let newtd2 = document.createElement('td');
+            let newtd3 = document.createElement('td');
+            let newtd4 = document.createElement('td');
+            let newtd5 = document.createElement('td');
+            let newtd6 = document.createElement('td');
+            let newtd7 = document.createElement('td');
+            let newtd8 = document.createElement('td');
+        
+        // converting radion input value to text
+            if(promoyes.checked){
+                promochecked = "Yes";
+            }else if(promono.checked){
+                promochecked = "No";
+            }
+
+
+
+        
+        // create tds texts depending on input values
+            let saveitems;
+
+            if(localStorage.StoredItems != null){
+                saveitems = JSON.parse(localStorage.StoredItems);
+            }else{
+                saveitems = []; 
+            }
+
+        
+         
+        
+        // validating the form by checking wrong inputs
+        // if there is no wrong input 'else' will run code of creating new tr and tds
+            if(name.length > 30 || name.length == 0){
+                alert("name must be less than 30 letters")
+            }
+            else if(mark.length > 30 || mark.length == 0){
+                alert("Marque must be less than 30 letters")
+            }
+            else if(price <= 0){
+                alert("Price must be more than " + price + "$")
+            }
+            else if(date == ""){
+                alert("Date must be filled")
+            }
+            else if(type == 1){
+                alert("Vous devez choisir un type")
+            }
+            else if(promodefault.checked){
+                alert("Vous devez choisir s'il y a une promotion")
+            }
+            else{
+
+                let Newitem = {
+                nom : name.value,
+                marque : mark.value,
+                prix : price.value,
+                date : date.value,
+                type : type.value,
+                promotion : promochecked,          
+                }
+                let parentmodal = document.getElementById("parentmodal")
+                let modal = document.createElement("div");
+                modal.setAttribute("id", "modal")
+                parentmodal.appendChild(modal)
+                let h1 = document.createElement("h1");
+                h1.setAttribute("id", "x")
+                let x = document.createTextNode("🞪")
+
+                modal.appendChild(h1)
+                h1.appendChild(x)
+                let button = document.getElementById("btn");
+                h1.addEventListener("click", close)
+                button.disabled = true;
+                button.style.cursor = "not-allowed";
+                function close(){
+                    modal.remove()
+                    button.style.cursor = "auto";
+                    button.disabled = false;
+                }
+
+
+
+                let li1 = document.createElement("li");
+                let li2 = document.createElement("li");
+                let li3 = document.createElement("li");
+                let li4 = document.createElement("li");
+                let li5 = document.createElement("li");
+                let li6 = document.createElement("li");
+
+                let ul = document.createElement("ul");
+
+                modal.appendChild(ul)
+
+                ul.appendChild(li1)
+                ul.appendChild(li2)
+                ul.appendChild(li3)
+                ul.appendChild(li4)
+                ul.appendChild(li5)
+                ul.appendChild(li6)
+
+                let linom = document.createTextNode(Newitem.nom)
+                let limark = document.createTextNode(Newitem.marque)
+                let liprice = document.createTextNode(Newitem.prix)
+                let lidate = document.createTextNode(Newitem.date)
+                let litype = document.createTextNode(Newitem.type)
+                let lipromtion = document.createTextNode(Newitem.promotion)
+
+                li1.appendChild(linom)
+                li2.appendChild(limark)
+                li3.appendChild(liprice)
+                li4.appendChild(lidate)
+                li5.appendChild(litype)
+                li6.appendChild(lipromtion)
+
+
+                saveitems.push(Newitem)
+                localStorage.setItem('StoredItems', JSON.stringify(saveitems))
+                for(let i = 0; i < saveitems.length; i++){
+                    let table = document.getElementById('tables');
+                let newtr = document.createElement('tr');
+                let newtd1 = document.createElement('td');
+                let newtd2 = document.createElement('td');
+                let newtd3 = document.createElement('td');
+                let newtd4 = document.createElement('td');
+                let newtd5 = document.createElement('td');
+                let newtd6 = document.createElement('td');
+                let newtd7 = document.createElement('td');
+                let newtd8 = document.createElement('td');
+
+                let tdnom = document.createTextNode(saveitems[i].nom)
+                let tdmark = document.createTextNode(saveitems[i].marque)
+                let tdprice = document.createTextNode(saveitems[i].prix)
+                let tddate = document.createTextNode(saveitems[i].date)
+                let tdtype = document.createTextNode(saveitems[i].type)
+                let tdpromtion = document.createTextNode(saveitems[i].promotion)
+
+
+
+
+
+                            // New Buttons created after clicking on "Ajouter" Button,
+        // Button Name of Delete called "Supprimer" and Button Name of Modification called "Modifier"
+            let newtdbtnmod = document.createElement('button');
+        
+        let newtdbtnsup = document.createElement('button');
+    
+        let ModButtonText = document.createTextNode('Modifier')
+        let SupButtonText = document.createTextNode('Supprimer')
+    
+        newtdbtnmod.appendChild(ModButtonText)
+        newtdbtnsup.appendChild(SupButtonText)
+    
+    // Adding Attributes And Functions to our buttons
+        newtdbtnsup.setAttribute("id", "supprimer")
+        newtdbtnsup.addEventListener("click", supprimer);
+    
+    
+        newtdbtnmod.setAttribute("id", "modifier")
+        newtdbtnmod.addEventListener("click", modifier);
+
+
+                table.appendChild(newtr);
+        
+                newtr.appendChild(newtd1);
+                newtr.appendChild(newtd2);
+                newtr.appendChild(newtd3);
+                newtr.appendChild(newtd4);
+                newtr.appendChild(newtd5);
+                newtr.appendChild(newtd6);
+                newtr.appendChild(newtd7);
+                newtr.appendChild(newtd8);
+        
+                newtd1.appendChild(tdnom)
+                newtd2.appendChild(tdmark)
+                newtd3.appendChild(tdprice)
+                newtd4.appendChild(tddate)
+                newtd5.appendChild(tdtype)
+                newtd6.appendChild(tdpromtion)
+                newtd7.appendChild(newtdbtnmod)
+                newtd8.appendChild(newtdbtnsup)
+
+                function supprimer(){
+            let alertDelete = confirm("Vous allez le supprimer !!")
+        
+            if(alertDelete == true){
+                table.rows[newtr.rowIndex].remove()
+            }
+            }
+        // "modifier" function will modify the chosen created tr
+        function modifier(){  
+            let newtdbtnediter = document.createElement('button');
+            let newtdbtnEditerText = document.createTextNode('Editer')
+            newtdbtnediter.appendChild(newtdbtnEditerText)
+            let theform = document.getElementById('buttons');
+            theform.appendChild(newtdbtnediter)
+            newtdbtnediter.setAttribute("id", "btnediter")
+            newtdbtnediter.addEventListener("click", editer);
+        
+        // what written in the table will come back to the inputs
+            document.getElementById('name').value = table.rows[newtr.rowIndex].cells[newtd1.cellIndex].innerText
+            document.getElementById('mark').value = table.rows[newtr.rowIndex].cells[newtd2.cellIndex].innerText
+            document.getElementById('price').value = table.rows[newtr.rowIndex].cells[newtd3.cellIndex].innerText
+            document.getElementById('date').value = table.rows[newtr.rowIndex].cells[newtd4.cellIndex].innerText
+        
+        // select only accepte the value
+            if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "hygiène et toilette"){
+            document.getElementById('type').value ="hygiène et toilette"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "soins esthétiques"){
+            document.getElementById('type').value = "soins esthétiques"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "produits solaires"){
+            document.getElementById('type').value = "produits solaires"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == 
+                "beauté des mains et des pieds"){
+            document.getElementById('type').value = "beauté des mains et des pieds"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "produits de maquillage"){
+            document.getElementById('type').value = "produits de maquillage"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "entretien capillaires"){
+            document.getElementById('type').value = "entretien capillaires"
+            }else if(table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText == "parfums"){
+            document.getElementById('type').value = "parfums"
+            }
+        
+        // if it is yes or no in the table, the radio input will get checked.
+            if(promochecked == "Yes"){
+            document.getElementById('promoy').checked = true
+            }else if(promochecked == "No"){
+            document.getElementById('promon').checked = true
+            }
+        
+        // changing the function of button "Modifier" to be its function deleting "Modifier" button.
+            newtdbtnmod.setAttribute("id", "modifier2")
+            newtdbtnmod.addEventListener("click", modifier2);
+            function modifier2(){
+            newtdbtnediter.remove()
+            }
+        
+        
+        // the filled values in the inputs will replace table tds innertexts
+            function editer(){
+            newtdbtnediter.remove()
+            let type = document.getElementById('type').value;
+        
+            if(promoyes.checked){
+                promochecked = "Yes";
+            }else if(promono.checked){
+                promochecked = "No";
+            }
+        
+        
+        table.rows[newtr.rowIndex].cells[newtd1.cellIndex].innerText = document.getElementById('name').value
+        table.rows[newtr.rowIndex].cells[newtd2.cellIndex].innerText  = document.getElementById('mark').value
+        table.rows[newtr.rowIndex].cells[newtd3.cellIndex].innerText = document.getElementById('price').value
+        table.rows[newtr.rowIndex].cells[newtd4.cellIndex].innerText = document.getElementById('date').value
+        table.rows[newtr.rowIndex].cells[newtd5.cellIndex].innerText = document.getElementById('type').value
+        table.rows[newtr.rowIndex].cells[newtd6.cellIndex].innerText = promochecked
+        // turning back the values to default
+            document.getElementById('name').value = ""
+            document.getElementById('mark').value =""
+            document.getElementById('price').value =""
+            document.getElementById('date').value =""
+            document.getElementById('promod').checked = true
+            document.getElementById('type').value = 1
+        
+        }
+        }
+
+            }
+                document.getElementById('name').value = ""
+                document.getElementById('mark').value =""
+                document.getElementById('price').value =""
+                document.getElementById('date').value =""
+                document.getElementById('promod').checked = true
+                document.getElementById('type').value = 1
+            }
+        
+        
+        // "supprimer" function will delete chosen created tr
+            
+        }
+        </script>
+        
+        
+
+
+
+
+    <style>
+    body{
+    padding: 30PX;
+    margin: 0;
+    background-image: url("https://simplonline.co/_next/image?url=https%3A%2F%2Fsimplonline-v3-prod.s3.eu-west-3.amazonaws.com%2Fmedia%2Fimage%2Fwebp%2Ffc87b590-fd5b-4ef3-b104-1cb4ad339dce.webp&w=1280&q=75");
+    background-repeat: no-repeat;
+    backdrop-filter: blur(5px);    
+    }
+
+    form{
+    padding: 80px 3px;
+    width: 80%;
+    MARGIN: 0 auto;
+    background-color: #d2b8bb;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 27px;
+    color: #d2b8bb;
+    display: grid;
+    }
+    form label{
+    font-size: 17px;
+    padding-top: 18px;
+    padding-bottom: 5px;
+    MARGIN-LEFT: 11%;
+    color: #ffffff;
+    align-items: left;
+    text-align: left;
+    }
+    form input{
+    padding: 15px 9px 15px 9PX;
+    MARGIN: 0 auto;
+    WIDTH: 77%;
+    color: #d2b8bb;
+    border-radius: 10px;
+    background-color: azure;
+    outline: none;
+    border: none;
+    }
+    
+    form select{
+    padding: 15px 9px 15px 9PX;
+    MARGIN: 0 auto;
+    WIDTH: 79%;
+    color: #d2b8bb;
+    border-radius: 10px;
+    background-color: azure;
+    outline: none;
+    border: none;
+    }
+    #promod{
+        display: none;
+    }
+
+    form #buttons{
+        text-align: center;
+        align-items: center;
+    }
+    form #btn, #btnediter{
+    padding: 15px 9px 15px 9PX;
+    border-radius: 10px;
+    MARGIN: 0 auto;
+    WIDTH: 79%;
+    margin-top: 18px;
+    background-color: white;
+    color: #d2b8bb;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.8s;
+    }
+
+    #modal{
+    position: absolute;
+    top: 50vh;
+    left: 25%;
+    align-items: left;
+    text-align: left;
+    text-decoration: none;
+    list-style: none;
+    color: #dcb4b9;
+    background-color: black;
+    width: 50%;
+    border-radius: 5px;
+    }
+    #modal #x{
+    float: right;
+    color: red;    
+    padding-right: 25px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+    form #btn:hover, #btnediter:hover{
+    background-color: #98777b;
+    }
+
+    table button{
+    padding: 15px 9px 15px 9PX;
+    border-radius: 3px;
+    background-color: white;
+    color: #d2b8bb;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.8s;
+    }
+
+    table button:hover{
+        background-color: #dcb4b9;
+        color: white;
+
+    }
+
+
+    #promo{
+    display: INLINE;
+    margin-top: 2%;  
+    }
+
+    form #promo label {
+    margin-top: 2%;
+    font-size: smaller;  
+    }
+
+    form #promo input {
+    margin-top: 2%;
+    width: 20PX;
+    }
+
+
+
+
+
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 80%;
+          margin: 0 auto;
+          margin-top:44px;
+          color: white;
+          
+
+        }
+        
+        td {
+          border: 1px solid #fff;
+          text-align: left;
+          padding: 8px;
+          background-color: #d2b8bb;
+
+
+        }
+
+        th {
+          border: 1px solid #fff;
+          text-align: left;
+          padding: 8px;
+          background-color: #d2b8bb;
+        }
+        
+        </style>
+</body>
+</html>
